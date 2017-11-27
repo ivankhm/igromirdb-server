@@ -1,0 +1,102 @@
+<!--
+<html lang="en">
+<head>
+
+    <link rel="stylesheet" type="text/css" href="login-style.css">
+
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+-->
+    <!--
+    <script src="../assets/js/jquery.js"></script>
+    <script>
+        $.fn.serializeObject = function()
+        {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        }
+    </script>
+    -->
+
+    <div class="content">
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'Login')" id="openDefault">Login</button>
+            <button class="tablinks" onclick="openTab(event, 'Register')">Register</button>
+        </div>
+
+        <div id="Login" class="tabcontent">
+
+            <form class="login-form" id="login-form" action="#" method="post">
+                <h1>Login</h1>
+                <p><label>Login:</label><input id="login-field" name="login" placeholder="Login"></p>
+                <p><label>Password:</label><input id="password-field" name="password" placeholder="Password"></p>
+                <p>
+                    <label>Are you representing company?
+                        <input id="is-login-company" type="checkbox" onchange="changeForm(this)">
+                    </label>
+                </p>
+                <button class="navigationButton" type="submit">Login</button>
+            </form>
+
+
+        </div>
+
+        <div id="Register" class="tabcontent">
+            <form class="reg-form" id="regForm" action="#" method="post">
+                <h1>Register</h1>
+
+                <div class="registerTab">
+
+                    <p>
+                    <label>Are you representing company?
+                        <input id="isCompany" type="checkbox" onchange="changeForm(this)">
+                    </label>
+                    </p>
+                    <p><label id="label-1"></label><input name="company_name"  placeholder="First name..." oninput="this.className = ''"></p>
+                    <p><label id="label-2"></label><input name="company_description" placeholder="Last name..." oninput="this.className = ''"></p>
+                    <p><label id="label-3">Image: </label><input name="image" placeholder="Image..." oninput="this.className = ''"></p>
+                    <p><label id="label-4">Ticket Number: </label><input  name="ticket_number" placeholder="xxxx-xxxx-xxxx-xxxx" oninput="this.className = ''"></p>
+                </div>
+
+                <div class="registerTab">
+                    Login Info:
+                    <p><label>Login:</label><input name="login" placeholder="Login..." oninput="this.className = ''"></p>
+                    <p><label>Password: </label><input name="password" type="password" placeholder="Password..." oninput="this.className = ''"></p>
+                </div>
+
+                <div style="overflow:auto;">
+                    <div style="float:right;">
+                        <button type="button" class="navigationButton" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
+                        <button type="button" class="navigationButton" id="nextBtn" onclick="nextPrev(1)">Next</button>
+                    </div>
+                </div>
+
+                <div style="text-align:center;margin-top:40px;">
+                    <span class="step"></span>
+                    <span class="step"></span>
+                </div>
+            </form>
+
+
+
+        </div>
+
+    </div>
+
+<!--
+</body>
+</html>
+-->
