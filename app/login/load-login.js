@@ -1,7 +1,14 @@
-
-
 $(document).ready(function () {
-    loadLoginPage();
+    var obj = JSON.parse(sessionStorage.getItem('user'));
+    if (obj === null)
+        {
+                loadLoginPage();
+        }
+    else
+        {
+            showStands();
+        }
+    //showStands();
 
 });
 

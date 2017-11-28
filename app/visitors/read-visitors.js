@@ -6,8 +6,6 @@ $(document).ready(
     }
 );
 
-
-
 function showProducts()
 {
     $.getJSON("http://localhost/igromirdb-server/api/visitor/read.php", function(data){

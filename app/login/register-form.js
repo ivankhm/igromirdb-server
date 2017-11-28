@@ -171,7 +171,7 @@ $(document).on('submit', "#regForm", function () {
 
     var form_data = JSON.stringify($(this).serializeObject());
     var form_url;
-
+    alert("HELLO");
     if (document.getElementById('isCompany').checked)
     {
         form_url = "http://localhost/igromirdb-server/api/company/create.php";
@@ -189,6 +189,7 @@ $(document).on('submit', "#regForm", function () {
         success: function (result) {
             console.log('success');
             console.log(result);
+            showStands();
         },
         error: function (xhr, resp, text) {
             console.log('fail');
@@ -199,46 +200,64 @@ $(document).on('submit', "#regForm", function () {
     return false;
 })
 
+
 $(document).on('submit', '#login-form',
     function () {
+        alert("SUMBIT");
+        //showStands();
         var form_data = JSON.stringify($(this).serializeObject());
         var form_url;
-        if (document.getElementById('is-login-company').checked)
+        var isCompany = document.getElementById('is-login-company').checked;
+        if (isCompany)
         {
-            form_url = "http://localhost/igromirdb-server/api/company/login.html";
+            form_url = "http://localhost/igromirdb-server/api/company/login.php";
         }
-        else {
-            form_url = "http://localhost/igromirdb-server/api/visitor/login.html";
+        else 
+        {
+            form_url = "http://localhost/igromirdb-server/api/visitor/login.php";
         }
 
         form_url+="?login="+document.getElementById("login-field").value+"&password="+document.getElementById("password-field").value;
+        //alert(form_url);
+        /*
         $.getJSON(form_url, function(data){
             if (data.result === true)
             {
                 console.log('success');
+                showStands();
             }
             else
             {
                 console.log('fail');
             }
+            
         });
-
-        /*
+*/
+        
         $.ajax({
             url: form_url,
-            type: "POST",
+            type: "GET",
             contentType: 'application/json',
-            data: form_data,
             success: function (result) {
                 console.log('success');
                 console.log(result);
+                if (result.result === true){
+                    //setUserInfo()
+                    setUserInfo(result.id, isCompany);
+                    //showStands();
+                   
+                }
+                
             },
             error: function (xhr, resp, text) {
                 console.log('fail');
                 console.log(xhr, resp, text);
             }
         });
-        */
+    
+        return false;
     }
  )
+
+
 

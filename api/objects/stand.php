@@ -85,7 +85,7 @@ class Stand {
     public function read()
     {
         $query = "
-        SELECT s.id, dp.title, dp.description, i.path FROM 
+        SELECT s.id, dp.title, dp.description, i.path as image FROM 
 	        stands s 
         JOIN discr_pairs dp 
     	  ON dp.id = s.discr_pair_id

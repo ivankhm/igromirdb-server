@@ -4,10 +4,61 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+    <style>
+        .main {
+            max-width: 1000px;
+            margin: auto;
+        }
+        .row {
+            margin: 8px - 10px
+        }
+        
+        .row, 
+        .row > .comlum {
+            padding: 8px;
+        }
+        
+        .column {
+            float: left;
+            width: 33.33%;
+        }
+        
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        
+        .stand-content {
+            padding: 10px;
+        }
+    </style>
 <body>
     <div class="row">
-
-
+        <div class="column">
+            <div class="stand-content" id="stand-preview">
+                <img id="stand-image" style="width: 400px" src="http://localhost/igromirdb-server/app/resources/Fur%20Papa%20Cover.png">
+                <p><label id="stand-title">Stand1</label></p>
+            </div>
+        </div>
+        <div class="column">
+            <div class="stand-content" id="stand-preview">
+                <img id="stand-image" style="width: 400px" src="http://localhost/igromirdb-server/app/resources/Fur%20Papa%20Cover.png">
+                <p><label id="stand-title">Stand1</label></p>
+            </div>
+        </div>
+        <div class="column">
+            <div class="stand-content" id="stand-preview">
+                <img id="stand-image" style="width: 400px" src="http://localhost/igromirdb-server/app/resources/Fur%20Papa%20Cover.png">
+                <p><label id="stand-title">Stand1</label></p>
+            </div>
+        </div>
+        <div class="column">
+            <div class="stand-content" id="stand-preview">
+                <img id="stand-image" style="width: 400px" src="http://localhost/igromirdb-server/app/resources/Fur%20Papa%20Cover.png">
+                <p><label id="stand-title">Stand1</label></p>
+            </div>
+        </div>
     </div>
 
 

@@ -74,7 +74,44 @@ class Company
         $stmt->execute();
         return $stmt;
     }
-
+    
+    
+    public function readOne()
+    {
+        $query = "
+        SELECT c.id, ai.login, ai.pswrd_hash, ci.company_name, ci.company_description, i.path as image 
+            FROM $this->table_name c 
+                 JOIN companies_info ci 
+                        ON c.company_info_id = ci.id 
+                 JOIN images i 
+                        ON ci.image_id = i.id 
+                 JOIN 
+                    autho_info ai 
+                        ON c.autho_info_id = ai.id
+            WHERE c.id=:sid
+            LIMIT
+                0,1
+        ";
+        
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->bindParam(':sid', $this->id);
+        
+        $stmt->execute();
+        
+        // get retrieved row
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        //var_dump($row);
+        
+        $this->image = $row['image'];
+        $this->login = $row['login'];
+        $this->password_hash = $row['pswrd_hash'];
+        $this->company_name = $row['company_name'];
+        $this->company_description = $row['company_description'];
+        //var_dump($this);
+    }
+    
 
     public function create()
     {

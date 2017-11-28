@@ -161,3 +161,30 @@ input.invalid {
 .step.finish {
     background-color: #4CAF50;
 }
+
+<!-- STANDS -->
+
+        .row {
+            margin: 8px - 10px
+        }
+        
+        .row, 
+        .row > .comlum {
+            padding: 8px;
+        }
+        
+        .column {
+            float: left;
+            width: 33.33%;
+            
+        }
+        
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        
+        .stand-content {
+            padding: 10px;
+        }

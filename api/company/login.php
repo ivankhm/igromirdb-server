@@ -50,7 +50,7 @@ $company->password_hash = password_hash($_GET['password'], PASSWORD_DEFAULT);
 $stmt = $company->login();
 
 $num = $stmt->rowCount();
-
+//var_dump($num);
 $result = array (
     "result" => false,
     "id" => null
