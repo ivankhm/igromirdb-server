@@ -4,26 +4,36 @@ function showStands()
 {
     $.getJSON("http://localhost/igromirdb-server/api/stand/read.php", function(data){
         
+        jQuery.get('http://localhost/igromirdb-server/app/stands/stand-modal.html', function (htmldata) {
+        
         var obj = JSON.parse(sessionStorage.getItem('user'));
         //while
-        var pageHTML = "<h1>"+obj.userName+"</h1>";
+        var pageHTML = "<h1>Logged as "+obj.userName+"("+obj.login+")</h1>";
+        
+        
+        pageHTML += htmldata;
+        
         
         pageHTML += "<div class='row'>";
         
         $.each(data.records, function(key, val){
             pageHTML += "<div class='column'>"
                 pageHTML+="<div class='stand-content' id='stand-preview-"+val.id+"'>"
-                    pageHTML+="<img id='stand-image' style='width: 200px' src='"+val.image+"'>"
+                    pageHTML+="<img id='stand-image' style='width: 300px' src='"+val.image+"'>"
                     pageHTML+= "<p><label id='stand-title'>"+val.title+"</label></p>"
-                    pageHTML+="<button >Take stand</button>";        
+                    pageHTML+="<button id='openModal' onclick='onChangeStand("+val.id+")'>"
+                        +((val.owner_id === null)?("Take stand"):("Chage stand")) + "</button>";        
             pageHTML+="</div></div>"
         });
+        //var a = (true)?(1):(0);
         pageHTML+="</div>";
-        $("#page-content").html(pageHTML);
+        
+        $("#page-content").html(pageHTML+'<script src="app/stands/stand.js"></script>');
         changePageTitle("Stands");
         
     });
-    
+        
+});
 }
 
 function setUserInfo(id, isCompany)
