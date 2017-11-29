@@ -43,7 +43,7 @@ $data = json_decode(file_get_contents("php://input"));
 $stand->image = $data->image;
 $stand->title = $data->title;
 $stand->description = $data->description;
-
+$stand->hall_id = $data->hall_id;
 
 /*
 $visitor->fisrt_name = $_GET['first_name'];

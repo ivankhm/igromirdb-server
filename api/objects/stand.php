@@ -48,10 +48,10 @@ class Stand {
 	          SET path=:image;
 
             INSERT INTO discr_pairs 
-	          SET title=:title, description=:description;
+	          SET title=:title, description=:description; 
     
             INSERT INTO stands 
-	          SET discr_pair_id= (SELECT id FROM discr_pairs WHERE title=:title AND description=:description), hall_id:=hall_id, image_id=
+	          SET discr_pair_id= (SELECT id FROM discr_pairs WHERE title=:title AND description=:description), hall_id=:hall_id, image_id=
     	               (SELECT  id FROM images i WHERE i.path = :image);
 
         ";
