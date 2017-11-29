@@ -32,13 +32,68 @@
         .stand-content {
             padding: 10px;
         }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            
+        }
+        .modal-content {
+            position: relative;
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0px;
+            border: 1px solid #888;
+            width: 80%;
+            box-shadow:  0 4px 8px 0 rbga(0, 0 ,0 , 0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+            -webkit-animation-name: animatetop;
+            -webkit-animation-duration: 0.4s;
+            animation-name: animatetop;
+            animation-duration: 0.4s;
+        }
+        
+        @-webkit-keyframes animatetop 
+        {
+            from {top: -300px; opacity: 0}
+            to {top: 0; opacity: 1}
+        }
+        
+        @keyframes animatetop 
+        {
+            from {top: -300px; opacity: 0}
+            to {top: 0; opacity: 1}
+        }
+        
     </style>
 <body>
+    <div id="updateStandModal" class="modal">
+        <div class="modal-content">
+            <form id="update-stand-form" action="#" method="post">
+                <p><label>Stand Title:</label><input type="text" placeholder="Stand Title"></p>
+                <p><label>Stand Description:</label><input type="text" placeholder="Description"></p>
+                <p><label>Stand Image: </label><input type="image"></p>
+                <p><label>Stand Events:</label>
+                <p><button class="close">Take Stand</button></p>
+            </form>
+        </div>
+    </div>
+    
+    
+    
     <div class="row">
         <div class="column">
             <div class="stand-content" id="stand-preview">
-                <img id="stand-image" style="width: 400px" src="http://localhost/igromirdb-server/app/resources/Fur%20Papa%20Cover.png">
+                <img id="stand-image" style="width: 400px" src="http://localhost/igromirdb-server/app/resources/default1.png">
                 <p><label id="stand-title">Stand1</label></p>
+                <p><button id="openModal" onclick="onChageStand(2)">Take Stand</button></p>
             </div>
         </div>
         <div class="column">
@@ -61,6 +116,9 @@
         </div>
     </div>
 
+    <script>
+        
+    </script>
 
 </body>
 </html>

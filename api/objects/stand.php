@@ -31,13 +31,53 @@ class Stand {
                 "id" => $id,
                 "title" => $title,
                 "description" => $description,
-                "image" => $image
+                "image" => $image,
+                "hall_id" => $hall_id,
+                "owner_id" => $owner_id
             );
             //var_dump($visitor_item);
 
 
             array_push($visitors_arr["records"], $visitor_item);
         }
+    }
+    
+    public function readOne()
+    {
+        $query = "
+        SELECT s.id, dp.title, dp.description, s.hall_id, s.owner_id, i.path as image FROM 
+	        stands s 
+        JOIN discr_pairs dp 
+    	  ON dp.id = s.discr_pair_id
+        JOIN images i
+    	  ON s.image_id = i.id;
+          WHERE s.id=:sid
+          LIMIT 0,1
+        ";
+        //OPEN
+        //SHORTEST
+        //PATH
+        //FIRST
+
+    
+        
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->bindParam(':sid', $this->id);
+        
+        $stmt->execute();
+        
+        // get retrieved row
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        //var_dump($row);
+        
+        $this->image = $row['image'];
+        $this->title = $row['title'];
+        $this->description = $row['description'];
+        $this->hall_id = $row['hall_id'];
+        $this->owner_id = $row['owner_id'];
+        //var_dump($this);
     }
 
 
@@ -85,7 +125,7 @@ class Stand {
     public function read()
     {
         $query = "
-        SELECT s.id, dp.title, dp.description, i.path as image FROM 
+        SELECT s.id, dp.title, dp.description, s.hall_id, s.owner_id, i.path as image FROM 
 	        stands s 
         JOIN discr_pairs dp 
     	  ON dp.id = s.discr_pair_id
