@@ -15,14 +15,27 @@ function showStands()
         
         
         pageHTML += "<div class='row'>";
-        
+        //var obj = JSON.parse(sessionStorage.getItem('user'));
+        var submit_string = "";
         $.each(data.records, function(key, val){
-            pageHTML += "<div class='column'>"
-                pageHTML+="<div class='stand-content' id='stand-preview-"+val.id+"'>"
-                    pageHTML+="<img id='stand-image' style='width: 300px' src='"+val.image+"'>"
-                    pageHTML+= "<p><label id='stand-title'>"+val.title+"</label></p>"
-                    pageHTML+="<button id='openModal' onclick='onChangeStand("+val.id+")'>"
-                        +((val.owner_id === null)?("Take stand"):("Chage stand")) + "</button>";        
+            pageHTML += "<div class='column'>";
+                pageHTML+="<div class='stand-content' id='stand-preview-"+val.id+"'>";
+                    pageHTML+="<img id='stand-image' style='width: 300px' src='"+val.image+"'>";
+                    pageHTML+= "<p><label id='stand-title'>"+val.title+"</label></p>";
+                    submit_string="";
+                    if (val.owner_id === obj.id) {
+                        submit_string = "Change Stand";
+                    } else if (val.owner_id === null)
+                    {
+                        submit_string = "Take Stand";
+                    }
+
+                    if (submit_string.length !== 0)
+                    {
+                        pageHTML+="<button id='openModal' onclick='onChangeStand("+val.id+")'>" + submit_string + "</button>";
+                    }
+
+
             pageHTML+="</div></div>"
         });
         //var a = (true)?(1):(0);
@@ -65,6 +78,7 @@ function setUserInfo(id, isCompany)
                 {
                     user =  
                     {
+                        'id': result.id,
                         'login' : result.login,
                         'userName' : result.company_name,
                         'isCompany' : isCompany
@@ -74,6 +88,7 @@ function setUserInfo(id, isCompany)
                 {
                     user =  
                     {
+                        'id': result.id,
                         'login' : result.login,
                         'userName' : result.first_name+" "+result.second_name,
                         'isCompany' : isCompany
@@ -89,3 +104,5 @@ function setUserInfo(id, isCompany)
             }
         });  
 }
+
+

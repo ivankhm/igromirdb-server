@@ -24,6 +24,7 @@ $data = json_decode(file_get_contents("php://input"));
 
 $stand->id = $data->id;
 $stand->image = $data->image;
+$stand->owner_id = $data->owner_id;
 $stand->description = $data->description;
 $stand->title = $data->title;
 
