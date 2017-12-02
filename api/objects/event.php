@@ -33,7 +33,7 @@ class StandEvent
                 "id" => $id,
                 "title" => $title,
                 "description" => $description,
-                "event_time" => $event_time,
+                "event_time" => $formatted_event_time,
                 "stand_id" => $stand_id,
             );
             //var_dump($visitor_item);
@@ -72,7 +72,7 @@ class StandEvent
 
         $this->title = $row['title'];
         $this->description = $row['description'];
-        $this->event_time = $row['event_time'];
+        $this->event_time = $row['formatted_event_time'];
         $this->stand_id = $row['stand_id'];
         //var_dump($this);
     }
@@ -80,7 +80,7 @@ class StandEvent
     public function readStandEvents($standId)
     {
         $query = "
-        SELECT t.id, dp.title, dp.description, t.event_time, t.stand_id  FROM 
+        SELECT t.id, dp.title, dp.description,  DATE_FORMAT(t.event_time, '%Y-%m-%d %H:%i') AS formatted_event_time, t.stand_id  FROM 
 	        $this->table_name t
         JOIN discr_pairs dp 
     	  ON dp.id = t.discr_pair_id
@@ -103,7 +103,7 @@ class StandEvent
 	          SET title=:title, description=:description; 
     
             INSERT INTO $this->table_name 
-	          SET discr_pair_id= (SELECT id FROM discr_pairs WHERE title=:title AND description=:description), event_time=:event_time, stand_id =:stand_id;
+	          SET discr_pair_id= (SELECT id FROM discr_pairs WHERE title=:title AND description=:description), event_time='2017.10.10 $this->event_time', stand_id =:stand_id;
         ";
 
         $stmt = $this->conn->prepare($query);
