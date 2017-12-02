@@ -2,7 +2,7 @@ $(document).ready(function () {
     var obj = JSON.parse(sessionStorage.getItem('user'));
     if (obj === null)
         {
-                loadLoginPage();
+            loadLoginPage();
         }
     else
         {

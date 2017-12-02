@@ -2,22 +2,20 @@
 /**
  * Created by PhpStorm.
  * User: ivank
- * Date: 11/27/2017
- * Time: 8:05 PM
+ * Date: 12/1/2017
+ * Time: 2:29 PM
  */
 
-class Stand {
-
+class StandEvent
+{
     private $conn;
-    private $table_name = 'stands';
+    private $table_name = 'timetable';
 
     public $id;
     public $title;
     public $description;
-    public $hall_id;
-    public $owner_id;
-    public $image;
-
+    public $event_time;
+    public $stand_id;
 
     public function __construct($db)
     {
@@ -35,9 +33,8 @@ class Stand {
                 "id" => $id,
                 "title" => $title,
                 "description" => $description,
-                "image" => $image,
-                "hall_id" => $hall_id,
-                "owner_id" => $owner_id
+                "event_time" => $event_time,
+                "stand_id" => $stand_id,
             );
             //var_dump($visitor_item);
 
@@ -45,17 +42,15 @@ class Stand {
             array_push($visitors_arr["records"], $visitor_item);
         }
     }
-    
+
     public function readOne()
     {
         $query = "
-        SELECT s.id, dp.title, dp.description, s.hall_id, s.owner_id, i.path as image FROM 
-	        stands s 
+        SELECT t.id, dp.title, dp.description, t.event_time, t.stand_id  FROM 
+	        $this->table_name t
         JOIN discr_pairs dp 
-    	  ON dp.id = s.discr_pair_id
-        JOIN images i
-    	  ON s.image_id = i.id
-        WHERE s.id=:sid
+    	  ON dp.id = t.discr_pair_id
+        WHERE t.id=:sid
           LIMIT 0,1
         ";
         //OPEN
@@ -63,56 +58,67 @@ class Stand {
         //PATH
         //FIRST
 
-    
-        
         $stmt = $this->conn->prepare($query);
-        
+
         $stmt->bindParam(':sid', $this->id);
-        
+
         $stmt->execute();
-        
+
         // get retrieved row
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         //var_dump($row);
-        
-        $this->image = $row['image'];
+
+
         $this->title = $row['title'];
         $this->description = $row['description'];
-        $this->hall_id = $row['hall_id'];
-        $this->owner_id = $row['owner_id'];
+        $this->event_time = $row['event_time'];
+        $this->stand_id = $row['stand_id'];
         //var_dump($this);
     }
 
-
-    public function create()
+    public function readStandEvents($standId)
     {
         $query = "
-            INSERT INTO images 
-	          SET path=:image;
-
-            INSERT INTO discr_pairs 
-	          SET title=:title, description=:description; 
-    
-            INSERT INTO stands 
-	          SET discr_pair_id= (SELECT id FROM discr_pairs WHERE title=:title AND description=:description), hall_id=:hall_id, image_id=
-    	               (SELECT  id FROM images i WHERE i.path = :image);
-
+        SELECT t.id, dp.title, dp.description, t.event_time, t.stand_id  FROM 
+	        $this->table_name t
+        JOIN discr_pairs dp 
+    	  ON dp.id = t.discr_pair_id
+        WHERE t.stand_id=:stand_id;
+        
         ";
 
         $stmt = $this->conn->prepare($query);
 
-        $this->image = htmlspecialchars(strip_tags($this->image));
+        $stmt->bindParam(':stand_id', $standId);
+
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function create()
+    {
+        $query = "
+            INSERT INTO discr_pairs 
+	          SET title=:title, description=:description; 
+    
+            INSERT INTO $this->table_name 
+	          SET discr_pair_id= (SELECT id FROM discr_pairs WHERE title=:title AND description=:description), event_time=:event_time, stand_id =:stand_id;
+        ";
+
+        $stmt = $this->conn->prepare($query);
+
+        $this->event_time = htmlspecialchars(strip_tags($this->event_time));
         $this->title = htmlspecialchars(strip_tags($this->title));
         $this->description = htmlspecialchars(strip_tags($this->description));
-        $this->hall_id = htmlspecialchars(strip_tags($this->hall_id));
+        $this->stand_id = htmlspecialchars(strip_tags($this->stand_id));
 
         //var_dump($this);
 
-        $stmt->bindParam(":image", $this->image);
+        $stmt->bindParam(":event_time", $this->event_time);
         $stmt->bindParam(":title", $this->title);
         $stmt->bindParam(":description", $this->description);
-        $stmt->bindParam(":hall_id", $this->hall_id);
+        $stmt->bindParam(":stand_id", $this->stand_id);
         //var_dump($stmt);
 
 
@@ -129,12 +135,10 @@ class Stand {
     public function read()
     {
         $query = "
-        SELECT s.id, dp.title, dp.description, s.hall_id, s.owner_id, i.path as image FROM 
-	        stands s 
+        SELECT t.id, dp.title, dp.description, t.event_time, t.stand_id  FROM 
+	        $this->table_name t
         JOIN discr_pairs dp 
-    	  ON dp.id = s.discr_pair_id
-        JOIN images i
-    	  ON s.image_id = i.id;
+    	  ON dp.id = t.discr_pair_id;
         ";
         //OPEN
         //SHORTEST
@@ -150,37 +154,29 @@ class Stand {
     public function update()
     {
         $query = "
-
-            UPDATE images i
-	         SET path=:image
-	         WHERE i.id = (SELECT image_id FROM stands s WHERE s.id=:id);
-
             UPDATE discr_pairs dp
 	          SET title=:title, description=:description
-	        WHERE dp.id = (SELECT discr_pair_id FROM stands s WHERE s.id =:id);
+	        WHERE dp.id = (SELECT discr_pair_id FROM $this->table_name t WHERE t.id =:id);
 	        
-	        UPDATE stands s
-	          SET s.owner_id = :owner_id
-	          WHERE s.id =:id;
+	        UPDATE $this->table_name t
+	          SET t.event_time = :event_time
+	          WHERE t.id =:id;
 	        ";
 
         $stmt = $this->conn->prepare($query);
 
         $this->id = htmlspecialchars(strip_tags($this->id));
-        $this->image = htmlspecialchars(strip_tags($this->image));
         $this->title = htmlspecialchars(strip_tags($this->title));
         $this->description = htmlspecialchars(strip_tags($this->description));
-        $this->hall_id = htmlspecialchars(strip_tags($this->hall_id));
-        $this->owner_id = htmlspecialchars(strip_tags($this->owner_id));
+        //$this->stand_id = htmlspecialchars(strip_tags($this->stand_id));
+        $this->event_time = htmlspecialchars(strip_tags($this->event_time));
 
         //var_dump($this);
         $stmt->bindParam(":id", $this->id);
-        $stmt->bindParam(":image", $this->image);
         $stmt->bindParam(":title", $this->title);
         $stmt->bindParam(":description", $this->description);
-        $stmt->bindParam(":hall_id", $this->hall_id);
-        $stmt->bindParam(":owner_id", $this->owner_id);
-
+        //$stmt->bindParam(":hall_id", $this->hall_id);
+        $stmt->bindParam(":event_time", $this->event_time);
 
         if($stmt->execute())
         {
@@ -191,4 +187,26 @@ class Stand {
             return false;
         }
     }
+
+    public function delete()
+    {
+        $query = "
+            DELETE FROM $this->table_name WHERE id =:id;
+        ";
+
+        $stmt = $this->conn->prepare($query);
+
+        $this->id = htmlspecialchars(strip_tags($this->id));
+
+        $stmt->bindParam(':id', $this->id);
+
+        if ($stmt->execute())
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+
 }

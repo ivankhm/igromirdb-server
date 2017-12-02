@@ -2,11 +2,10 @@
 /**
  * Created by PhpStorm.
  * User: ivank
- * Date: 11/27/2017
- * Time: 9:00 PM
+ * Date: 12/1/2017
+ * Time: 10:47 PM
  */
 
-// required headers
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
@@ -14,25 +13,26 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
-include_once '../objects/stand.php';
+include_once '../objects/event.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$stand = new Stand($db);
+$stand = new StandEvent($db);
 
 $data = json_decode(file_get_contents("php://input"));
 
-$stand->image = $data->image;
-$stand->title = $data->title;
+$stand->id = $data->id;
+$stand->event_time = $data->event_time;
+$stand->stand_id = $data->stand_id;
 $stand->description = $data->description;
-$stand->hall_id = $data->hall_id;
+$stand->title = $data->title;
 
-if ($stand->create())
+if ($stand->update())
 {
-    echoMessage('Stand was created!');
+    echoMessage("Stand event updated!");
 }
 else
 {
-    echoMessage('Unable create a stand!');
+    echoMessage("Unable to update stand event.");
 }

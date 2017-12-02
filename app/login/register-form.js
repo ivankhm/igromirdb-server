@@ -171,8 +171,9 @@ $(document).on('submit', "#regForm", function () {
 
     var form_data = JSON.stringify($(this).serializeObject());
     var form_url;
-    alert("HELLO");
-    if (document.getElementById('isCompany').checked)
+   // alert("HELLO");
+    var isCompany = document.getElementById('isCompany').checked;
+    if (isCompany)
     {
         form_url = "http://localhost/igromirdb-server/api/company/create.php";
     }
@@ -189,7 +190,8 @@ $(document).on('submit', "#regForm", function () {
         success: function (result) {
             console.log('success');
             console.log(result);
-            showStands();
+            //showStands();
+            setUserInfo(result.id, isCompany);
         },
         error: function (xhr, resp, text) {
             console.log('fail');
@@ -203,9 +205,9 @@ $(document).on('submit', "#regForm", function () {
 
 $(document).on('submit', '#login-form',
     function () {
-        alert("SUMBIT");
+        //alert("SUBMIT");
         //showStands();
-        var form_data = JSON.stringify($(this).serializeObject());
+        //var form_data = JSON.stringify($(this).serializeObject());
         var form_url;
         var isCompany = document.getElementById('is-login-company').checked;
         if (isCompany)

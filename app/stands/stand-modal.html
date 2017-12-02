@@ -1,16 +1,25 @@
 <div id="updateStandModal" class="modal">
         <div class="modal-content">
             <form id="update-stand-form" action="#" method="post">
+                <p><h3>Main Information:</h3></p>
                 <p><label>Stand Title:</label><input name="title" type="text" placeholder="Stand Title"></p>
                 <p><label>Stand Description:</label><input name="description" type="text" placeholder="Description"></p>
-                <p><label>Stand Image: </label><input name="image" type="text"></p>
-                <p><label>Stand Events:</label></p>
-                <input type="text" id="crutch-id" name="id" style="display: block">
+                <p><label>Stand Image: </label><input name="image" type="text" value="Add event"></p>
+                <p><h3>Stand Events:</h3></p>
+                <div class="event-manager">
+                    <p><h4>New Event:</h4></p>
+                    <p><label>Event Name:</label><input name="event_title" placeholder="Event"></p>
+                    <p><label>Event Description:</label><input name="event_description" placeholder="Description"></p>
+                    <p><label>Event Time:</label><input type="time" name="event_time"></p>
+                    <p><button type="button" id="addEvent" onclick="addEventToTemp()">Add Event</button></p>
+                    <p><h4>Existing Events:</h4></p>
+                    <div id="stand-events"></div>
+                </div>
+                <input type="text" id="crutch-id" name="id" style="display: none">
 
-                <input type="text" id="crutch-owner_id" name="owner_id" style="display: block">
+                <input type="text" id="crutch-owner_id" name="owner_id" style="display: none">
 
                 <p><button type="submit" id="update-stand-submit"></button></p>
-
             </form>
         </div>
 </div>

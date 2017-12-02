@@ -1,5 +1,4 @@
 
-
 function showStands()
 {
     $.getJSON("http://localhost/igromirdb-server/api/stand/read.php", function(data){
@@ -16,23 +15,25 @@ function showStands()
         
         pageHTML += "<div class='row'>";
         //var obj = JSON.parse(sessionStorage.getItem('user'));
-        var submit_string = "";
+        var open_string = "";
         $.each(data.records, function(key, val){
             pageHTML += "<div class='column'>";
                 pageHTML+="<div class='stand-content' id='stand-preview-"+val.id+"'>";
                     pageHTML+="<img id='stand-image' style='width: 300px' src='"+val.image+"'>";
                     pageHTML+= "<p><label id='stand-title'>"+val.title+"</label></p>";
-                    submit_string="";
-                    if (val.owner_id === obj.id) {
-                        submit_string = "Change Stand";
-                    } else if (val.owner_id === null)
-                    {
-                        submit_string = "Take Stand";
+            open_string="";
+                    if (obj.isCompany) {
+                        if (val.owner_id === obj.id) {
+                            open_string = "Change Stand";
+                        } else if (val.owner_id === null) {
+                            open_string = "Take Stand";
+                        }
+                    } else {
+                        open_string = "More info";
                     }
-
-                    if (submit_string.length !== 0)
+                    if (open_string.length !== 0)
                     {
-                        pageHTML+="<button id='openModal' onclick='onChangeStand("+val.id+")'>" + submit_string + "</button>";
+                        pageHTML+="<button id='openModal' onclick='onChangeStand("+val.id+")'>" + open_string + "</button>";
                     }
 
 
@@ -90,7 +91,7 @@ function setUserInfo(id, isCompany)
                     {
                         'id': result.id,
                         'login' : result.login,
-                        'userName' : result.first_name+" "+result.second_name,
+                        'userName' : result.first_name+" "+result.last_name,
                         'isCompany' : isCompany
                     };
                 }
@@ -105,4 +106,71 @@ function setUserInfo(id, isCompany)
         });  
 }
 
+function loadEvents(id, fromDB) {
+    //alert('here');
+    var event_html ="<table class='table table-bordered table-hover'>";
 
+    // creating our table heading
+    event_html+="<tr>";
+    event_html+="<th class='w-10-pct'>Time</th>";
+    event_html+="<th class='w-30-pct'>Title</th>";
+    event_html+="<th class='w-50-pct'>Description</th>";
+    event_html+="<th class='w-10-pct text-align-center'>Action</th>";
+    event_html+="</tr>";
+
+    if (fromDB) {
+        modalStandEvents = [];
+
+        $.ajax({
+            url: "http://localhost/igromirdb-server/api/event/read-stand-events.php?stand-id=" + id,
+            dataType: 'json',
+            async: false,
+            success: function(data) {
+                $.each(data.records, function (key, val) {
+                    //alert(val.title);
+                    modalStandEvents.push(
+                        {
+                            'event_time': val.event_time,
+                            'title': val.title,
+                            'description': val.description,
+                            'stand_id': id,
+                            'isNew' : false
+                        }
+                    );
+                });
+                //alert(modalStandEvents[0].title);
+            }
+        });
+    }
+    //alert(modalStandEvents[0].title);
+    $.each(modalStandEvents, function (key, val) {
+        //lert(val.title);
+        // creating new table row per record
+        event_html += "<tr>";
+
+        event_html += "<td>" + val.event_time + "</td>";
+        event_html += "<td>" + val.title + "</td>";
+        event_html += "<td>" + val.description + "</td>";
+
+        // 'action' buttons
+        event_html += "<td>";
+
+        // edit button
+        event_html += "<button class='btn btn-info m-r-10px update-product-button' data-id='" + val.id + "'>";
+        event_html += "<span class='glyphicon glyphicon-edit'></span> Edit";
+        event_html += "</button>";
+
+        // delete button
+        event_html += "<button class='btn btn-danger delete-product-button' data-id='" + val.id + "'>";
+        event_html += "<span class='glyphicon glyphicon-remove'></span> Delete";
+        event_html += "</button>";
+        event_html += "</td>";
+
+        event_html += "</tr>";
+    });
+
+    // end table
+    event_html+="</table>";
+
+    $("#stand-events").html(event_html);
+}
