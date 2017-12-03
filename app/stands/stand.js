@@ -92,7 +92,7 @@ function addEventToTemp() {
     tempIndex -=1;
     var data =
         {
-            'id' : tempIndex,
+            'id' : tempIndex.toString(),
             'event_time': document.getElementsByName("event_time")[0].value,
             'title': document.getElementsByName('event_title')[0].value,
             'description': document.getElementsByName('event_description')[0].value,
