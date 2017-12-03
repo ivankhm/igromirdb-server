@@ -2,6 +2,7 @@ var modal = document.getElementById('updateStandModal');
 
 var modalStandEvents = [];
 
+var tempIndex = -1;
 //var btn = document.getElementById('openModal');
         
 //var span = document.getElementsByClassName('close')[0];
@@ -84,45 +85,20 @@ $(document).on('submit', "#update-stand-form",
         return false;
     });
 
-function submitEvents() {
-    var url_path = "http://localhost/igromirdb-server/api/event/create.php";
-    var form_data;
-    $.each(modalStandEvents, function (key, val) {
-        if (val.isNew)
-        {
-            form_data = JSON.stringify(val);
-            $.ajax({
-                    url: url_path,
-                    type: "POST",
-                    contentType: 'application/json',
-                    data: form_data,
-                    success: function (result) {
-                        console.log('success');
-                        console.log(result);
-                        //alert(result.message);
-                        //modal.style.display = "none";
-                        //showStands();
-                        //loadEvents(id);
-                    },
-                    error: function (xhr, resp, text) {
-                        console.log('fail');
-                        console.log(xhr, resp, text);
-                    }
-                }
-            );
-        }
-    });
-}
 
 
 function addEventToTemp() {
     var id = document.getElementById("crutch-id").value;
+    tempIndex -=1;
     var data =
         {
+            'id' : tempIndex,
             'event_time': document.getElementsByName("event_time")[0].value,
             'title': document.getElementsByName('event_title')[0].value,
             'description': document.getElementsByName('event_description')[0].value,
             'stand_id': id,
+            'isDeleted': false,
+            'isUpdated': false,
             'isNew' : true
         };
 
@@ -130,30 +106,16 @@ function addEventToTemp() {
 
     loadEvents(id, false);
 
-    /*
-    var form_data = JSON.stringify(data);
-
-    var url_path = "http://localhost/igromirdb-server/api/event/create.php";
-
-    $.ajax({
-            url: url_path,
-            type: "POST",
-            contentType: 'application/json',
-            data: form_data,
-            success: function (result) {
-                console.log('success');
-                console.log(result);
-                //alert(result.message);
-                //modal.style.display = "none";
-                //showStands();
-                loadEvents(id);
-            },
-            error: function (xhr, resp, text) {
-                console.log('fail');
-                console.log(xhr, resp, text);
-            }
-        }
-    );
-    */
 }
+
+$(document).on('click', '.delete-event-button', function () {
+    var event_id = $(this).attr('data-id');
+    //var value =
+    var stand_id = modalStandEvents.filter(function (t) { return t.id === event_id; })[0].stand_id;
+
+    modalStandEvents
+        .filter(function (t) {return t.id === event_id;})[0]
+        .isDeleted = true;
+    loadEvents(stand_id, false);
+});
 

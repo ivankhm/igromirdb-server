@@ -46,7 +46,7 @@ class StandEvent
     public function readOne()
     {
         $query = "
-        SELECT t.id, dp.title, dp.description, t.event_time, t.stand_id  FROM 
+        SELECT t.id, dp.title, dp.description, DATE_FORMAT(t.event_time, '%Y-%m-%d %H:%i') AS formatted_event_time, t.stand_id  FROM 
 	        $this->table_name t
         JOIN discr_pairs dp 
     	  ON dp.id = t.discr_pair_id
@@ -191,6 +191,8 @@ class StandEvent
     public function delete()
     {
         $query = "
+            DELETE FROM discr_pairs WHERE id = (SELECT e.discr_pair_id FROM $this->table_name e WHERE e.id =:id );
+  
             DELETE FROM $this->table_name WHERE id =:id;
         ";
 

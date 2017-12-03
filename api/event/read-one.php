@@ -28,7 +28,8 @@ $stand_arr = array(
     "id" => $stand->id,
     "title" => $stand->title,
     "description" => $stand->description,
-
+    "event_time" => $stand->event_time,
+    "stand_id" => $stand->stand_id
 );
 //var_dump($visitor);
 //var_dump($visitor_arr);

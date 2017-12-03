@@ -130,10 +130,13 @@ function loadEvents(id, fromDB) {
                     //alert(val.title);
                     modalStandEvents.push(
                         {
+                            'id' : val.id,
                             'event_time': val.event_time,
                             'title': val.title,
                             'description': val.description,
                             'stand_id': id,
+                            'isDeleted': false,
+                            'isUpdated': false,
                             'isNew' : false
                         }
                     );
@@ -144,29 +147,36 @@ function loadEvents(id, fromDB) {
     }
     //alert(modalStandEvents[0].title);
     $.each(modalStandEvents, function (key, val) {
-        //lert(val.title);
-        // creating new table row per record
-        event_html += "<tr>";
+        if (!val.isDeleted) {
+            // creating new table row per record
+            event_html += "<tr>";
 
-        event_html += "<td>" + val.event_time + "</td>";
-        event_html += "<td>" + val.title + "</td>";
-        event_html += "<td>" + val.description + "</td>";
+           // event_html += "<td>" + val.event_time + "</td>";
+            //event_html += "<td>" + val.title + "</td>";
+            //event_html += "<td>" + val.description + "</td>";
 
-        // 'action' buttons
-        event_html += "<td>";
 
-        // edit button
-        event_html += "<button class='btn btn-info m-r-10px update-product-button' data-id='" + val.id + "'>";
-        event_html += "<span class='glyphicon glyphicon-edit'></span> Edit";
-        event_html += "</button>";
+            event_html += "<td><div id='event_time_"+val.id+"'>" + val.event_time + "</div></td>";
+            event_html += "<td><div id='title_"+val.id+"'>" + val.title + "</div></td>";
+            event_html += "<td><div id='description_"+val.id+"'>" + val.description + "</div></td>";
 
-        // delete button
-        event_html += "<button class='btn btn-danger delete-product-button' data-id='" + val.id + "'>";
-        event_html += "<span class='glyphicon glyphicon-remove'></span> Delete";
-        event_html += "</button>";
-        event_html += "</td>";
+            // 'action' buttons
+            event_html += "<td>";
 
-        event_html += "</tr>";
+            // edit button
+            event_html += "<button type='button' class='btn btn-info m-r-10px update-event-button edit-button' data-id='" + val.id + "'>";
+            //event_html += "<span class='glyphicon glyphicon-edit'></span>Edit";
+            event_html += "Edit";
+            event_html += "</button>";
+
+            // delete button
+            event_html += "<button type='button' class='btn btn-danger delete-event-button' data-id='" + val.id + "'>";
+            event_html += "<span class='glyphicon glyphicon-remove'></span>Delete";
+            event_html += "</button>";
+            event_html += "</td>";
+
+            event_html += "</tr>";
+        }
     });
 
     // end table
@@ -174,3 +184,86 @@ function loadEvents(id, fromDB) {
 
     $("#stand-events").html(event_html);
 }
+
+
+function submitEvents() {
+    var url_path;// = "http://localhost/igromirdb-server/api/event/create.php";
+    var form_data;
+    var isNeedToUpdate = false;
+    $.each(modalStandEvents, function (key, val) {
+        isNeedToUpdate = false;
+        if (val.isDeleted && !val.isNew)
+        {
+            console.log(val.id + ' '+ val.isDeleted + val.isNew);
+            url_path = "http://localhost/igromirdb-server/api/event/delete.php";
+            isNeedToUpdate = true;
+        }
+        if (val.isNew && !val.isDeleted)
+        {
+            console.log(val.id + ' '+ val.isDeleted + val.isNew);
+            url_path = "http://localhost/igromirdb-server/api/event/create.php";
+            isNeedToUpdate = true;
+        }
+        if (val.isUpdated && !val.isNew && !val.isDeleted)
+        {
+            url_path = "http://localhost/igromirdb-server/api/event/update.php";
+            isNeedToUpdate = true;
+        }
+
+        if (isNeedToUpdate) {
+            form_data = JSON.stringify(val);
+            $.ajax({
+                    url: url_path,
+                    type: "POST",
+                    contentType: 'application/json',
+                    data: form_data,
+                    success: function (result) {
+                        console.log('success');
+                        console.log(result);
+                        //alert(result.message);
+                        //modal.style.display = "none";
+                        //showStands();
+                        //loadEvents(id);
+                    },
+                    error: function (xhr, resp, text) {
+                        console.log('fail');
+                        console.log(xhr, resp, text);
+                    }
+                }
+            );
+        }
+
+    });
+}
+
+$(document).on('click', '.update-event-button', function(){
+    var event_id = $(this).attr('data-id');
+
+    var val = modalStandEvents.filter(function (t) { return t.id === event_id; })[0];
+
+    $(this).toggleClass('edit-button');
+
+    if ($(this).hasClass('edit-button'))
+    {
+        var event_time = document.getElementsByName("changed-event-time-"+val.id)[0];
+        var title = document.getElementsByName('changed-title-'+val.id)[0];
+        var description = document.getElementsByName('changed-description-'+val.id)[0];
+
+        //val.event_time = event_time.value;
+
+        val.title = title.value;
+        val.description = description.value;
+        val.isUpdated = true;
+
+        $(this).html("Edit");
+        $('#event-time_'+event_id).html(val.event_time);
+        $('#title_'+event_id).html(val.title);
+        $('#description_'+event_id).html(val.description);
+    } else
+    {
+        $(this).html("Save");
+        $('#event-time_'+event_id).html("<input name='changed-event-time-"+val.id+"' type='time' value='"+val.event_time+"' />");
+        $('#title_'+event_id).html("<input name='changed-title-"+val.id+"' type='text' value='"+val.title+"' />");
+        $('#description_'+event_id).html("<textarea name='changed-description-"+val.id+"' >" + val.description + "</textarea>");
+    }
+});
