@@ -18,8 +18,8 @@ function onChangeStand(id){
     $.getJSON("http://localhost/igromirdb-server/api/stand/read-one.php?id="+id, function(data){
         document.getElementsByName('title')[0].value = data.title;
         document.getElementsByName('description')[0].value = data.description;
-        document.getElementsByName('image')[0].value = data.image;
-
+        document.getElementsByName('hiden_image')[0].value = data.image;
+        alert(data.owner_id);
         document.getElementById('update-stand-submit').textContent = ((data.owner_id === null)?("Take Stand"):("Update Stand"));
         document.getElementById("crutch-id").value = data.id;
         document.getElementById("crutch-owner_id").value = data.owner_id;
@@ -43,11 +43,6 @@ function onWatchStand(id) {
     //alert(id);
 
     loadEvents(id, true, false);
-
-
-
-
-
     watch_modal.style.display = "block";
 }
 
@@ -73,54 +68,6 @@ window.onclick = function(event)
     }
 };
 
-
-
-
-
-
-$(document).on('submit', "#update-stand-form",
-    function()
-    {
-        var owner_id = document.getElementById("crutch-owner_id");
-        //alert(owner_id.value);
-        var obj = JSON.parse(sessionStorage.getItem('user'));
-        if (owner_id.value === "")
-        {
-            owner_id.value = obj.id;
-        } else
-        if (owner_id.value !== obj.id)
-        {
-            alert("You can't update this stand!");
-            return false;
-        }
-
-        var form_data = JSON.stringify($(this).serializeObject());
-        var url_path = "http://localhost/igromirdb-server/api/stand/update.php";
-        
-        $.ajax({
-                url: url_path,
-                type: "POST",
-                contentType: 'application/json',
-                data: form_data,
-                success: function (result) {
-                    console.log('success');
-                    console.log(result);
-                    submitEvents();
-                    //alert(result.message);
-                    modal.style.display = "none";
-                    showStands();
-                },
-                error: function (xhr, resp, text) {
-                    console.log('fail');
-                    console.log(xhr, resp, text);
-                }
-            }
-        );
-        return false;
-    });
-
-
-
 function addEventToTemp() {
     var id = document.getElementById("crutch-id").value;
     tempIndex -=1;
@@ -138,7 +85,7 @@ function addEventToTemp() {
 
     modalStandEvents.push(data);
 
-    loadEvents(id, false);
+    loadEvents(id, false, true);
 
 }
 
@@ -150,7 +97,7 @@ $(document).on('click', '.delete-event-button', function () {
     modalStandEvents
         .filter(function (t) {return t.id === event_id;})[0]
         .isDeleted = true;
-    loadEvents(stand_id, false);
+    loadEvents(stand_id, false, true);
 });
 
 $(document).on('click', '.change-root-button', function () {

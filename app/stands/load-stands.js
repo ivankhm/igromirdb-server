@@ -183,7 +183,7 @@ function getRoots(visitor_id, stand_id) {
 function loadEvents(id, fromDB, isCompany) {
     //alert('here');
     var obj = JSON.parse(sessionStorage.getItem('user'));
-
+    
     getRoots(obj.id, id);
     var event_html ="<table class='table table-bordered table-hover'>";
 
@@ -364,3 +364,86 @@ $(document).on('click', '.update-event-button', function(){
         $('#description_'+event_id).html("<textarea name='changed-description-"+val.id+"' >" + val.description + "</textarea>");
     }
 });
+
+
+
+
+
+
+$(document).on('submit', "#update-stand-form",
+    function()
+    {
+        var owner_id = document.getElementById("crutch-owner_id");
+        //alert(owner_id.value);
+        var obj = JSON.parse(sessionStorage.getItem('user'));
+        if (owner_id.value === "")
+        {
+            owner_id.value = obj.id;
+        } else
+        if (owner_id.value !== obj.id)
+        {
+            alert("You can't update this stand!");
+            return false;
+        }
+
+        var form_obj = $(this).serializeObject();
+        var url_path = "http://localhost/igromirdb-server/api/stand/update.php";
+        
+        //send image first
+    
+        var file_data = $('#stand-image-file').prop('files')[0];
+        
+        if (typeof file_data !== 'undefined') 
+        {
+        var file_form_data = new FormData();
+        file_form_data.append('file', file_data);
+        //alert(file_form_data);
+        $.ajax(
+        {
+            url: "http://localhost/igromirdb-server/api/fileUpload/upload-file.php",
+            type: "POST",
+            cache: false,
+            processData: false,
+            contentType: false,
+            data: file_form_data,
+            async: false,
+            success:function(result)
+            {
+                if (result !== "error")
+                {
+                    form_obj.image = result;
+                }
+            },
+                error: function (xhr, resp, text) {
+                    console.log('fail');
+                    console.log(xhr, resp, text);
+                }
+        }
+        );
+        } else 
+            {
+                form_obj.image = form_obj.hiden_image;
+            }
+        
+        var form_data = JSON.stringify(form_obj);
+        $.ajax({
+                url: url_path,
+                type: "POST",
+                contentType: 'application/json',
+                data: form_data,
+                success: function (result) {
+                    console.log('success');
+                    console.log(result);
+                    submitEvents();
+                    //alert(result.message);
+                    modal.style.display = "none";
+                    showStands();
+                },
+                error: function (xhr, resp, text) {
+                    console.log('fail');
+                    console.log(xhr, resp, text);
+                }
+            }
+        );
+        return false;
+    });

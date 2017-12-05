@@ -4,13 +4,14 @@
                 <p><h3>Main Information:</h3></p>
                 <p><label>Stand Title:</label><input name="title" type="text" placeholder="Stand Title"></p>
                 <p><label>Stand Description:</label><input name="description" type="text" placeholder="Description"></p>
-                <p><label>Stand Image: </label><input name="image" type="text" value="Add event"></p>
+                <p><label>Stand Image: </label><input id="stand-image-file" name="file" type="file" value="Add event"></p>
+                <input type="text" name="hiden_image" style="display: none">
                 <p><h3>Stand Events:</h3></p>
                 <div class="event-manager">
                     <p><h4>New Event:</h4></p>
                     <p><label>Event Name:</label><input name="event_title" placeholder="Event"></p>
                     <p><label>Event Description:</label><input name="event_description" placeholder="Description"></p>
-                    <p><label>Event Time:</label><input type="datetime-local" name="event_time"></p>
+                    <p><label>Event Time:</label><input type="time" name="event_time"></p>
                     <p><button type="button" id="addEvent" onclick="addEventToTemp()">Add Event</button></p>
                     <p><h4>Existing Events:</h4></p>
                     <div id="stand-events"></div>

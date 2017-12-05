@@ -28,7 +28,6 @@ $stand->owner_id = $data->owner_id;
 $stand->description = $data->description;
 $stand->title = $data->title;
 
-
 if ($stand->update())
 {
     echoMessage("Stand updated!");

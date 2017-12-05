@@ -51,7 +51,7 @@ $visitor->ticket_number = $_GET['ticket_number'];
 //create visitor
 if ($visitor->create())
 {
-    echoMessage('Visitor was created!');
+    echoMessage('Visitor was createdw!');
 }
 else
 {

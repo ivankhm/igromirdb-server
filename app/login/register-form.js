@@ -169,7 +169,7 @@ function changeForm(element) {
 
 $(document).on('submit', "#regForm", function () {
 
-    var form_data = JSON.stringify($(this).serializeObject());
+    var form_obj = $(this).serializeObject();
     var form_url;
    // alert("HELLO");
     var isCompany = document.getElementById('isCompany').checked;
@@ -181,7 +181,42 @@ $(document).on('submit', "#regForm", function () {
     {
         form_url = "http://localhost/igromirdb-server/api/visitor/create.php";
     }
-
+    
+    
+    ////
+    
+    var file_data = $('#login-image').prop('files')[0];
+        
+    var file_form_data = new FormData();
+    file_form_data.append('file', file_data);
+        //alert(file_form_data);
+    $.ajax(
+        {
+            url: "http://localhost/igromirdb-server/api/fileUpload/upload-file.php",
+            type: "POST",
+            cache: false,
+            processData: false,
+            contentType: false,
+            data: file_form_data,
+            async: false,
+            success:function(result)
+            {
+                if (result !== "error")
+                {
+                    form_obj.image = result;
+                }
+            },
+                error: function (xhr, resp, text) {
+                    console.log('fail');
+                    console.log(xhr, resp, text);
+                }
+        }
+        );
+     
+    var form_data = JSON.stringify(form_obj);
+    
+    /////
+    
     $.ajax({
         url: form_url,
         type: "POST",
@@ -191,7 +226,7 @@ $(document).on('submit', "#regForm", function () {
             console.log('success');
             console.log(result);
             //showStands();
-            setUserInfo(result.id, isCompany);
+            setUserInfo(result.id, isCompany); // <3
         },
         error: function (xhr, resp, text) {
             console.log('fail');
@@ -235,7 +270,7 @@ $(document).on('submit', '#login-form',
             
         });
 */
-        
+        //TODO: convert to post method
         $.ajax({
             url: form_url,
             type: "GET",
@@ -259,7 +294,4 @@ $(document).on('submit', '#login-form',
     
         return false;
     }
- )
-
-
-
+ );
