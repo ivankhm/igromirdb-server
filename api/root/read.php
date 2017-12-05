@@ -19,7 +19,7 @@ $database = new Database();
 $db = $database->getConnection();
 
 
-$standEvent = new StandEvent($db);
+$standEvent = new Root($db);
 
 $stand_id = isset($_GET['stand-id'])?($_GET['stand-id']):null;
 $visitor_id = isset($_GET['visitor_id'])?($_GET['visitor_id']):null;
@@ -35,7 +35,7 @@ if ($num > 0)
     $standEvent_arr = array();
     $standEvent_arr["records"] = array();
 
-    StandEvent::toArray($stmt, $standEvent_arr);
+    Root::toArray($stmt, $standEvent_arr);
 
     echo json_encode($standEvent_arr);
 }

@@ -103,23 +103,34 @@ class Root
 
     public function read($stand_id, $visitor_id)
     {
+        /*
         $query = "
         SELECT r.id, r.event_id, r.visitor_id FROM $this->table_name r
         ";
 
         if ($stand_id != null)
         {
-            $query+="JOIN timetable t ON t.id = r.event_id";
-            $query+="WHERE t.id=:stand_id";
+            $query.="JOIN timetable t ON t.id = r.event_id ";
+            $query.="WHERE t.stand_id=:stand_id ";
         }
         if ($visitor_id !=null)
         {
-            $query+= "WHERE r.visitor_id=:visitor_id";
+            $query.= "AND r.visitor_id=:visitor_id ";
         }
-        $stmt = $this->conn->prepare($query);
+    */
+        $query =
+            "
+            SELECT r.id, r.event_id, r.visitor_id FROM roots r
+              JOIN timetable t ON t.id = r.event_id 
+            WHERE (t.stand_id=$stand_id AND r.visitor_id=$visitor_id)
+            ";
 
-        $stmt->bindParam(':stand_id', $stand_id);
-        $stmt->bindParam(':visitor_id', $visitor_id);
+     //   $stmt = $this->conn->prepare($query);
+       // var_dump($query);
+      //  var_dump($stand_id);
+      //  var_dump($visitor_id);
+        //$stmt->bindParam(':stand_id', $stand_id);
+        //$stmt->bindParam(':visitor_id', $visitor_id);
 
         $stmt = $this->conn->prepare($query);
 

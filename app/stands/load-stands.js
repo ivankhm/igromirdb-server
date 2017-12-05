@@ -4,14 +4,17 @@ function showStands()
     $.getJSON("http://localhost/igromirdb-server/api/stand/read.php", function(data){
         
         jQuery.get('http://localhost/igromirdb-server/app/stands/stand-modal.html', function (htmldata) {
-        
+        jQuery.get('http://localhost/igromirdb-server/app/stands/watch-stand-modal.html', function (watch_htmldata) {
+
+
         var obj = JSON.parse(sessionStorage.getItem('user'));
         //while
         var pageHTML = "<h1>Logged as "+obj.userName+"("+obj.login+")</h1>";
-        
+
+
         
         pageHTML += htmldata;
-        
+        pageHTML += watch_htmldata;
         
         pageHTML += "<div class='row'>";
         //var obj = JSON.parse(sessionStorage.getItem('user'));
@@ -33,7 +36,17 @@ function showStands()
                     }
                     if (open_string.length !== 0)
                     {
-                        pageHTML+="<button id='openModal' onclick='onChangeStand("+val.id+")'>" + open_string + "</button>";
+
+                        pageHTML+="<button id='openModal' onclick=";
+                        if (obj.isCompany)
+                        {
+                            pageHTML+="'onChangeStand("+val.id+")'>";
+                        } else
+                        {
+                            pageHTML+="'onWatchStand("+val.id+")'>";
+                        }
+                        pageHTML+=open_string + "</button>";
+
                     }
 
 
@@ -44,7 +57,7 @@ function showStands()
         
         $("#page-content").html(pageHTML+'<script src="app/stands/stand.js"></script>');
         changePageTitle("Stands");
-        
+        });
     });
         
 });
@@ -106,8 +119,72 @@ function setUserInfo(id, isCompany)
         });  
 }
 
-function loadEvents(id, fromDB) {
+function updateRoots() {
+    var data;
+    var url_path;//= "http://localhost/igromirdb-server/api/root/delete.php";
+    $.each(visitorRoots, function (key, val) {
+        if (val.isNew || val.isToDelete) {
+            if (!val.isNew) {
+                if (val.isToDelete) {
+                    //delete from db
+                    url_path = "http://localhost/igromirdb-server/api/root/delete.php";
+                }
+            } else {
+                if (!val.isToDelete) {
+                    //add to db
+                    url_path = "http://localhost/igromirdb-server/api/root/create.php";
+                }
+            }
+            data = JSON.stringify(val);
+            $.ajax({
+                url: url_path,
+                type: "POST",
+                contentType: 'application/json',
+                data: data,
+                success: function (result) {
+                    console.log('success');
+                    console.log(result);
+                },
+                error: function (xhr, resp, text) {
+                    console.log('fail');
+                    console.log(xhr, resp, text);
+                }
+
+            });
+        }
+    });
+
+}
+
+
+function getRoots(visitor_id, stand_id) {
+
+    $.ajax({
+        url: "http://localhost/igromirdb-server/api/root/read.php?stand-id=" + stand_id + "&visitor_id=" + visitor_id,
+        dataType: 'json',
+        async: false,
+        success: function (data) {
+            visitorRoots = [];
+            $.each(data.records, function (key, val) {
+                visitorRoots.push(
+                    {
+                        'id': val.id,
+                        'event_id': val.event_id,
+                        'visitor_id': val.visitor_id,
+                        'isNew': false,
+                        'isToDelete': false
+                    }
+                );
+            });
+        }
+    });
+}
+
+function loadEvents(id, fromDB, isCompany) {
     //alert('here');
+    var obj = JSON.parse(sessionStorage.getItem('user'));
+
+    getRoots(obj.id, id);
     var event_html ="<table class='table table-bordered table-hover'>";
 
     // creating our table heading
@@ -145,7 +222,7 @@ function loadEvents(id, fromDB) {
             }
         });
     }
-    //alert(modalStandEvents[0].title);
+
     $.each(modalStandEvents, function (key, val) {
         if (!val.isDeleted) {
             // creating new table row per record
@@ -162,17 +239,33 @@ function loadEvents(id, fromDB) {
 
             // 'action' buttons
             event_html += "<td>";
+            if (isCompany)
+            {
+                event_html += "<button type='button' class='btn btn-info m-r-10px update-event-button edit-button' data-id='" + val.id + "'>";
+                //event_html += "<span class='glyphicon glyphicon-edit'></span>Edit";
+                event_html += "Edit";
+                event_html += "</button>";
 
+
+
+                // delete button
+                event_html += "<button type='button' class='btn btn-danger delete-event-button' data-id='" + val.id + "'>";
+                event_html += "<span class='glyphicon glyphicon-remove'></span>Delete";
+                event_html += "</button>";
+            }
+            else {
+
+                if (visitorRoots.filter(function (t) { return t.event_id === val.id; }).length === 0)
+                {
+                    event_html += "<button type='button' class='btn btn-ifo change-root-button not-in-root' data-id='" + val.id + "'>Add To Root</button>";
+                }
+                else
+                {
+                    event_html += "<button type='button' class='btn btn-ifo change-root-button' data-id='" + val.id + "'>Remove From Root</button>";
+                }
+            }
             // edit button
-            event_html += "<button type='button' class='btn btn-info m-r-10px update-event-button edit-button' data-id='" + val.id + "'>";
-            //event_html += "<span class='glyphicon glyphicon-edit'></span>Edit";
-            event_html += "Edit";
-            event_html += "</button>";
 
-            // delete button
-            event_html += "<button type='button' class='btn btn-danger delete-event-button' data-id='" + val.id + "'>";
-            event_html += "<span class='glyphicon glyphicon-remove'></span>Delete";
-            event_html += "</button>";
             event_html += "</td>";
 
             event_html += "</tr>";
@@ -181,8 +274,12 @@ function loadEvents(id, fromDB) {
 
     // end table
     event_html+="</table>";
+    if (isCompany) {
+        $("#stand-events").html(event_html);
+    } else {
+        $("#watch-stand-events").html(event_html);
+    }
 
-    $("#stand-events").html(event_html);
 }
 
 
