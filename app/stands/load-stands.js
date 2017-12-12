@@ -22,7 +22,7 @@ function showStands()
         $.each(data.records, function(key, val){
             pageHTML += "<div class='column'>";
                 pageHTML+="<div class='stand-content' id='stand-preview-"+val.id+"'>";
-                    pageHTML+="<img id='stand-image' style='width: 300px' src='"+val.image+"'>";
+                    pageHTML+="<img id='stand-image' style='height: 300px' src='"+val.image+"'>";
                     pageHTML+= "<p><label id='stand-title'>"+val.title+"</label></p>";
             open_string="";
                     if (obj.isCompany) {
@@ -306,6 +306,7 @@ function submitEvents() {
             url_path = "http://localhost/igromirdb-server/api/event/update.php";
             isNeedToUpdate = true;
         }
+
 
         if (isNeedToUpdate) {
             form_data = JSON.stringify(val);

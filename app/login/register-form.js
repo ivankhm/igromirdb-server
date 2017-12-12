@@ -226,7 +226,38 @@ $(document).on('submit', "#regForm", function () {
             console.log('success');
             console.log(result);
             //showStands();
-            setUserInfo(result.id, isCompany); // <3
+
+            if (isCompany)
+            {
+                form_url = "http://localhost/igromirdb-server/api/company/login.php";
+            }
+            else
+            {
+                form_url = "http://localhost/igromirdb-server/api/visitor/login.php";
+            }
+
+            $.ajax({
+                url: form_url,
+                type: "POST",
+                data: form_data,
+                contentType: 'application/json',
+                success: function (result) {
+                    console.log('success');
+                    console.log(result);
+                    if (result.result === true){
+                        //setUserInfo()
+                        setUserInfo(result.id, isCompany);
+                        //showStands();
+
+                    }
+
+                },
+                error: function (xhr, resp, text) {
+                    console.log('fail');
+                    console.log(xhr, resp, text);
+                }
+            });
+
         },
         error: function (xhr, resp, text) {
             console.log('fail');
@@ -244,6 +275,7 @@ $(document).on('submit', '#login-form',
         //showStands();
         //var form_data = JSON.stringify($(this).serializeObject());
         var form_url;
+        var form_data = JSON.stringify($(this).serializeObject());
         var isCompany = document.getElementById('is-login-company').checked;
         if (isCompany)
         {
@@ -254,26 +286,13 @@ $(document).on('submit', '#login-form',
             form_url = "http://localhost/igromirdb-server/api/visitor/login.php";
         }
 
-        form_url+="?login="+document.getElementById("login-field").value+"&password="+document.getElementById("password-field").value;
-        //alert(form_url);
-        /*
-        $.getJSON(form_url, function(data){
-            if (data.result === true)
-            {
-                console.log('success');
-                showStands();
-            }
-            else
-            {
-                console.log('fail');
-            }
-            
-        });
-*/
+        //form_url+="?login="+document.getElementById("login-field").value+"&password="+document.getElementById("password-field").value;
+
         //TODO: convert to post method
         $.ajax({
             url: form_url,
-            type: "GET",
+            type: "POST",
+            data: form_data,
             contentType: 'application/json',
             success: function (result) {
                 console.log('success');

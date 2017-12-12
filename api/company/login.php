@@ -6,10 +6,11 @@
  * Time: 5:52 PM
  */
 
-
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Max-Age: 3600");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
 include_once '../objects/company.php';
@@ -19,50 +20,24 @@ $db = $database->getConnection();
 
 $company = new Company($db);
 
-// get posted data
-/*
-$data = json_decode('{
-            "login": "pesok228",
-            "password": "samosval",
-            "first_name": "Yiri",
-            "last_name": "Kostikov",
-            "ticket_number": "otchislensosixuy",
-            "image": "/a/a/a"
+$data = json_decode(file_get_contents("php://input"));
 
-            }');
-*/
-
-//var_dump($data);
-//return;
-//var_dump(file_get_contents("php://input"));
-
-//$data = json_decode(file_get_contents("php://input"));
-
-//$visitor->login = $data->login;
-//$visitor->password_hash = password_hash($data->password, PASSWORD_DEFAULT);
-$company->login = $_GET['login'];
-$company->password_hash = password_hash($_GET['password'], PASSWORD_DEFAULT);
-
-//echo $_GET['password'];
-
-//var_dump($visitor);
+$company->login = $data->login;
 
 $stmt = $company->login();
 
 $num = $stmt->rowCount();
-//var_dump($num);
+
 $result = array (
     "result" => false,
     "id" => null
 );
-//echo 1;
+
 if ($num > 0)
 {
-    //echo 2;
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    //var_dump($row);
 
-    if (password_verify($_GET['password'], $row['pswrd_hash'])) {
+    if (password_verify($data->password, $row['pswrd_hash'])) {
         $result["result"] = true;
         $result["id"] = $row["id"];
     }

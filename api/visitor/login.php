@@ -8,6 +8,9 @@
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Max-Age: 3600");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 
 include_once '../config/database.php';
@@ -16,35 +19,13 @@ include_once '../objects/visitor.php';
 $database = new Database();
 $db = $database->getConnection();
 
+$data = json_decode(file_get_contents("php://input"));
+
 $visitor = new Visitor($db);
 
-// get posted data
-/*
-$data = json_decode('{
-            "login": "pesok228",
-            "password": "samosval",
-            "first_name": "Yiri",
-            "last_name": "Kostikov",
-            "ticket_number": "otchislensosixuy",
-            "image": "/a/a/a"
+$visitor->login = $data->login;
 
-            }');
-*/
 
-//var_dump($data);
-//return;
-//var_dump(file_get_contents("php://input"));
-
-//$data = json_decode(file_get_contents("php://input"));
-
-//$visitor->login = $data->login;
-//$visitor->password_hash = password_hash($data->password, PASSWORD_DEFAULT);
-$visitor->login = $_GET['login'];
-$visitor->password_hash = password_hash($_GET['password'], PASSWORD_DEFAULT);
-
-//echo $_GET['password'];
-
-//var_dump($visitor);
 
 $stmt = $visitor->login();
 
@@ -61,7 +42,7 @@ if ($num > 0)
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     //var_dump($row);
 
-    if (password_verify($_GET['password'], $row['pswrd_hash'])) {
+    if (password_verify($data->password, $row['pswrd_hash'])) {
         $result["result"] = true;
         $result["id"] = $row["id"];
     }

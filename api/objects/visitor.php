@@ -252,7 +252,7 @@ class Visitor
         $stmt = $this->conn->prepare($query);
 
         $this->login = htmlspecialchars(strip_tags($this->login));
-        $this->password_hash = htmlspecialchars(strip_tags($this->password_hash));
+       // $this->password_hash = htmlspecialchars(strip_tags($this->password_hash));
 
         $stmt->bindParam(":login", $this->login);
         //$stmt->bindParam(":pswrd_hash", $this->password_hash);
